@@ -4,7 +4,11 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 import numpy as np
+import os
 
+API_KEY = os.environ.get("API_KEY") # Pobranie klucza API z zmiennych środowiskowych
+if not API_KEY:
+    raise ValueError("Brak zdefiniowanej zmiennej API_KEY")
 
 app = FastAPI(title="Lab 03")
 
@@ -30,7 +34,11 @@ class PredictionInput(BaseModel):
 # główny endpoint 
 @app.get("/")
 def read_root():
-    return {"message": "Witaj w API predykcji! Użyj endpointu /predict, aby uzyskać predykcję na podstawie wieku i zarobków."}
+
+    masked_key = f"{API_KEY[:3]}***" if API_KEY else "Brak klucza"
+
+    return {"message": "Witaj w API predykcji!", 
+             "api_key_status": masked_key}
 
 # endpoint predykcji z walidacją 
 @app.post("/predict")
